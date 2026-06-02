@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Liczenie oporności pozornej")
-        self.setFixedSize(QSize(1200, 800))
+        self.setFixedSize(QSize(1000, 600))
 
         central = QWidget()
         self.setCentralWidget(central)
