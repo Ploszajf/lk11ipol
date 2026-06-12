@@ -1,0 +1,8 @@
+miejsce pomiaru - środek między MN
+cel -> wyliczenie rho a (w zależności od zmiennej x)
+rho a = wsp geom * (dV/I)
+
+trójelektrodowy wsp geou = schlumberger *2
+
+wzory podane w przezentacji -> 2pi, a nie 4
+

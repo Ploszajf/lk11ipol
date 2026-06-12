@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, QLocale
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget,
     QVBoxLayout, QHBoxLayout, QFrame,
@@ -17,7 +17,6 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 
-# -------- PLOT CANVAS --------
 class PlotCanvas(FigureCanvas):
     def __init__(self):
         self.figure = Figure()
@@ -28,7 +27,6 @@ class PlotCanvas(FigureCanvas):
         self.draw()
 
 
-# -------- MAIN WINDOW --------
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -42,7 +40,6 @@ class MainWindow(QMainWindow):
         self.main_layout = QVBoxLayout()
         central.setLayout(self.main_layout)
 
-        # ===== TOP =====
         top_frame = QFrame()
         top_layout = QHBoxLayout()
         top_frame.setLayout(top_layout)
@@ -62,10 +59,8 @@ class MainWindow(QMainWindow):
 
         self.main_layout.addWidget(top_frame)
 
-        # ===== MIDDLE =====
         middle_layout = QHBoxLayout()
 
-        # --- INPUTS ---
         self.left_frame = QGroupBox("Parametry pomiaru")
         left_layout = QVBoxLayout()
         self.left_frame.setLayout(left_layout)
@@ -76,7 +71,6 @@ class MainWindow(QMainWindow):
 
         middle_layout.addWidget(self.left_frame, 2)
 
-        # --- PLOT ---
         right_frame = QFrame()
         right_layout = QVBoxLayout()
         right_frame.setLayout(right_layout)
@@ -88,7 +82,6 @@ class MainWindow(QMainWindow):
 
         self.main_layout.addLayout(middle_layout)
 
-        # ===== BOTTOM =====
         bottom_frame = QFrame()
         bottom_layout = QHBoxLayout()
         bottom_frame.setLayout(bottom_layout)
@@ -103,18 +96,17 @@ class MainWindow(QMainWindow):
 
         self.main_layout.addWidget(bottom_frame)
 
-        # ===== SIGNALS =====
         self.calc_button.clicked.connect(self.update_plot)
         self.clear_button.clicked.connect(self.clear_all)
 
         self.update_inputs()
 
-    # -------- INPUTS --------
     def clear_inputs(self):
         while self.inputs_layout.count():
             item = self.inputs_layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
 
     def add_input(self, label_text, row, unit=""):
         label = QLabel(label_text)
@@ -122,6 +114,7 @@ class MainWindow(QMainWindow):
         edit.setPlaceholderText("0.0")
 
         validator = QDoubleValidator()
+        validator.setLocale(QLocale(QLocale.Language.English, QLocale.Country.UnitedStates))
         edit.setValidator(validator)
 
         unit_label = QLabel(unit)
@@ -133,6 +126,10 @@ class MainWindow(QMainWindow):
         return edit
 
     def update_inputs(self):
+        sender = self.sender()
+        if sender and not sender.isChecked():
+            return
+
         self.clear_inputs()
         self.current_inputs = []
 
@@ -165,7 +162,6 @@ class MainWindow(QMainWindow):
             self.current_inputs.append(self.add_input("Oporność (ϱ1)", row, "Ω·m")); row += 1
             self.current_inputs.append(self.add_input("Oporność (ϱ2)", row, "Ω·m")); row += 1
 
-    # -------- ACTIONS --------
     def clear_all(self):
         self.update_inputs()
         self.plot_canvas.ax.clear()
@@ -195,12 +191,13 @@ class MainWindow(QMainWindow):
         self.plot_canvas.ax.clear()
         self.plot_canvas.ax.plot(x, y)
         self.plot_canvas.ax.set_title("Wynik obliczeń")
+        self.plot_canvas.ax.set_xlabel("Odległość [m]")
+        self.plot_canvas.ax.set_ylabel("Oporność [Ω·m]")
         self.plot_canvas.ax.grid()
 
         self.plot_canvas.draw()
 
 
-# -------- RUN --------
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
