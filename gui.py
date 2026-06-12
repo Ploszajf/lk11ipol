@@ -24,6 +24,8 @@ class PlotCanvas(FigureCanvas):
 
         self.ax = self.figure.add_subplot(111)
         self.ax.set_title("Wykres")
+        self.ax.set_xlim(0, 100)
+        self.ax.axvline(x=50, color='pink', linestyle='--', linewidth=2)
         self.draw()
 
 
@@ -165,6 +167,9 @@ class MainWindow(QMainWindow):
     def clear_all(self):
         self.update_inputs()
         self.plot_canvas.ax.clear()
+        self.plot_canvas.ax.set_xlim(0, 100)
+        self.plot_canvas.ax.axvline(x=50, color='pink', linestyle='--', linewidth=2)
+        self.plot_canvas.ax.set_title("Wykres")
         self.plot_canvas.draw()
 
     def update_plot(self):
@@ -190,11 +195,12 @@ class MainWindow(QMainWindow):
 
         self.plot_canvas.ax.clear()
         self.plot_canvas.ax.plot(x, y)
+        self.plot_canvas.ax.set_xlim(0, 100)
+        self.plot_canvas.ax.axvline(x=50, color='pink', linestyle='--', linewidth=2)
         self.plot_canvas.ax.set_title("Wynik obliczeń")
         self.plot_canvas.ax.set_xlabel("Odległość [m]")
         self.plot_canvas.ax.set_ylabel("Oporność [Ω·m]")
-        self.plot_canvas.ax.grid()
-
+        self.plot_canvas.ax.grid(True)
         self.plot_canvas.draw()
 
 
