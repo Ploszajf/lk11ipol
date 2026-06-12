@@ -27,7 +27,7 @@ def oblicz(a, n, dx, rho1, rho2):
     x_max = 100
     prad = 1
     
-    wsp_geom = math.pi * n * (n + 1) * a
+    wsp_geom = math.pi * ((((2 * a * n + a) /2)**2 - (a / 2)**2)/a)
 
     dlugosc_ukladu = (2 * n * a) + a
 
